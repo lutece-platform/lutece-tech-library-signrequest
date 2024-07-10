@@ -37,7 +37,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
+import fr.paris.lutece.util.signrequest.security.HashService;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * HeaderHashAuthenticator
@@ -47,6 +48,18 @@ public class HeaderHashAuthenticator extends AbstractPrivateKeyAuthenticator imp
     private static final String HEADER_SIGNATURE = "Lutece-Request-Signature";
     private static final String HEADER_TIMESTAMP = "Lutece-Request-Timestamp";
 
+    public HeaderHashAuthenticator( )
+    {
+
+    }
+
+    public HeaderHashAuthenticator(HashService hashService, List<String> lSignatureElements, String strPrivateKey)
+    {
+        setHashService( hashService );
+        setSignatureElements( lSignatureElements );
+        setPrivateKey( strPrivateKey );
+    }
+    
     /**
      * {@inheritDoc }
      */
