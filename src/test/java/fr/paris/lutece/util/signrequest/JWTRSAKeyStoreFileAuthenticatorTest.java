@@ -33,8 +33,6 @@
  */
 package fr.paris.lutece.util.signrequest;
 
-import fr.paris.lutece.test.MokeHttpServletRequest;
-import fr.paris.lutece.util.jwt.service.JWTUtil;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -43,8 +41,12 @@ import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.HashMap;
 import java.util.Map;
-import static org.junit.Assert.*;
-import org.junit.Test;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+import fr.paris.lutece.test.mocks.MockHttpServletRequest;
+import fr.paris.lutece.util.jwt.service.JWTUtil;
 
 /**
  * JWTSecretKeyAuthenticatorTest
@@ -74,7 +76,7 @@ public class JWTRSAKeyStoreFileAuthenticatorTest
         File file = Paths.get( res.toURI( ) ).toFile( );
         String absolutePath = file.getAbsolutePath( );
 
-        MokeHttpServletRequest request = new MokeHttpServletRequest( );
+        MockHttpServletRequest request = new MockHttpServletRequest( );
 
         Map<String, String> mapJWTClaims = new HashMap<>( );
         mapJWTClaims.put( CLAIM_KEY, CLAIM_VALUE );
@@ -83,10 +85,10 @@ public class JWTRSAKeyStoreFileAuthenticatorTest
                 KEYSTORE_PASSWORD, CERTIF_PASSWORD, ALIAS );
 
         // Build a request with JWT in header
-        request.addMokeHeader( HTTP_HEADER_NAME,
+        request.addHeader( HTTP_HEADER_NAME,
                 JWTUtil.buildBase64JWT( mapJWTClaims, authenticator.getExpirationDate( ), ALGO, authenticator.getKeyPair( ).getPrivate( ) ) );
 
-        assertTrue( authenticator.isRequestAuthenticated( request ) );
-        assertTrue( JWTUtil.checkPayloadValues( request, HTTP_HEADER_NAME, mapJWTClaims ) );
+        Assertions.assertTrue( authenticator.isRequestAuthenticated( request ) );
+        Assertions.assertTrue( JWTUtil.checkPayloadValues( request, HTTP_HEADER_NAME, mapJWTClaims ) );
     }
 }

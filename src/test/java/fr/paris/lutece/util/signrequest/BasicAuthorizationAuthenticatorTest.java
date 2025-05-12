@@ -33,9 +33,11 @@
  */
 package fr.paris.lutece.util.signrequest;
 
-import fr.paris.lutece.test.MokeHttpServletRequest;
-import static org.junit.Assert.*;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+import fr.paris.lutece.test.mocks.MockHttpServletRequest;
+
 
 /**
  * BasicAuthorizationAuthenticatorTest
@@ -55,10 +57,10 @@ public class BasicAuthorizationAuthenticatorTest
     public void testIsRequestAuthenticated( )
     {
         System.out.println( "isRequestAuthenticated" );
-        MokeHttpServletRequest request = new MokeHttpServletRequest( );
-        request.addMokeHeader( HEADER_AUTHORIZATION, BASIC_AUTHORIZATION_PREFIX + VALID_DIGEST );
+        MockHttpServletRequest request = new MockHttpServletRequest( );
+        request.addHeader( HEADER_AUTHORIZATION, BASIC_AUTHORIZATION_PREFIX + VALID_DIGEST );
         BasicAuthorizationAuthenticator authenticator = new BasicAuthorizationAuthenticator( USERNAME, PASSWORD );
-        assertTrue( authenticator.isRequestAuthenticated( request ) );
+        Assertions.assertTrue( authenticator.isRequestAuthenticated( request ) );
     }
 
 }

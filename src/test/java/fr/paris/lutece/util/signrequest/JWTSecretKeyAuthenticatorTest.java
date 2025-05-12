@@ -33,13 +33,16 @@
  */
 package fr.paris.lutece.util.signrequest;
 
-import fr.paris.lutece.test.MokeHttpServletRequest;
-import fr.paris.lutece.util.jwt.service.JWTUtil;
 import java.security.Key;
 import java.util.HashMap;
 import java.util.Map;
-import static org.junit.Assert.*;
-import org.junit.Test;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+import fr.paris.lutece.test.mocks.MockHttpServletRequest;
+import fr.paris.lutece.util.jwt.service.JWTUtil;
+import io.jsonwebtoken.security.Keys;
 
 /**
  * JWTSecretKeyAuthenticatorTest
@@ -59,7 +62,7 @@ public class JWTSecretKeyAuthenticatorTest
     @Test
     public void testSignRequestAndTestAuth( )
     {
-        MokeHttpServletRequest request = new MokeHttpServletRequest( );
+        MockHttpServletRequest request = new MockHttpServletRequest( );
 
         Map<String, String> mapJWTClaims = new HashMap<>( );
         mapJWTClaims.put( CLAIM_KEY, CLAIM_VALUE );
@@ -68,9 +71,9 @@ public class JWTSecretKeyAuthenticatorTest
         Key key = JWTUtil.getKey( SECRET_KEY, ALGO );
 
         // Build a request with a JWT in header
-        request.addMokeHeader( HTTP_HEADER_NAME, JWTUtil.buildBase64JWT( mapJWTClaims, authenticator.getExpirationDate( ), ALGO, key ) );
+        request.addHeader( HTTP_HEADER_NAME, JWTUtil.buildBase64JWT( mapJWTClaims, authenticator.getExpirationDate( ), key.getAlgorithm( ), key ) );
 
-        assertTrue( authenticator.isRequestAuthenticated( request ) );
-        assertTrue( JWTUtil.checkPayloadValues( request, HTTP_HEADER_NAME, mapJWTClaims ) );
+        Assertions.assertTrue( authenticator.isRequestAuthenticated( request ) );
+        Assertions.assertTrue( JWTUtil.checkPayloadValues( request, HTTP_HEADER_NAME, mapJWTClaims ) );
     }
 }
