@@ -36,8 +36,10 @@ package fr.paris.lutece.util.signrequest;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
@@ -47,6 +49,7 @@ import org.junit.jupiter.api.Test;
 
 import fr.paris.lutece.test.mocks.MockHttpServletRequest;
 import fr.paris.lutece.util.jwt.service.JWTUtil;
+import io.jsonwebtoken.security.Keys;
 
 /**
  * JWTSecretKeyAuthenticatorTest
@@ -85,6 +88,6 @@ public class JWTRSAPlainTextAuthenticatorTest
         request.addHeader( HTTP_HEADER_NAME, JWTUtil.buildBase64JWT( mapJWTClaims, authenticator.getExpirationDate( ), ALGO, privKey ) );
 
         Assertions.assertTrue( authenticator.isRequestAuthenticated( request ) );
-        Assertions.assertTrue( JWTUtil.checkPayloadValues( request, HTTP_HEADER_NAME, mapJWTClaims ) );
+        Assertions.assertTrue( JWTUtil.checkPayloadValues( request, authenticator.getKeyPair( ).getPublic( ), HTTP_HEADER_NAME, mapJWTClaims ) );
     }
 }

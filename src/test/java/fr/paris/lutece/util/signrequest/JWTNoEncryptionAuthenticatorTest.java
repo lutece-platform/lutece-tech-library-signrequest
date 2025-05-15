@@ -68,6 +68,6 @@ public class JWTNoEncryptionAuthenticatorTest
         request.addHeader( HTTP_HEADER_NAME, JWTUtil.buildBase64JWT( mapJWTClaims, authenticator.getExpirationDate( ), null, null ) );
 
         Assertions.assertTrue( authenticator.isRequestAuthenticated( request ) );
-        Assertions.assertTrue( JWTUtil.checkPayloadValues( request, HTTP_HEADER_NAME, mapJWTClaims ) );
+        Assertions.assertTrue( JWTUtil.checkUnsecuredPayloadValues( request, HTTP_HEADER_NAME, mapJWTClaims ) );
     }
 }

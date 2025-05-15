@@ -42,7 +42,6 @@ import org.junit.jupiter.api.Test;
 
 import fr.paris.lutece.test.mocks.MockHttpServletRequest;
 import fr.paris.lutece.util.jwt.service.JWTUtil;
-import io.jsonwebtoken.security.Keys;
 
 /**
  * JWTSecretKeyAuthenticatorTest
@@ -52,7 +51,7 @@ public class JWTSecretKeyAuthenticatorTest
     private static final String CLAIM_KEY = "claim_key";
     private static final String CLAIM_VALUE = "claim_value";
     private static final String HTTP_HEADER_NAME = "header_name";
-    private static final String SECRET_KEY = "testestestestest";
+    private static final String SECRET_KEY = "testestestestesttestestestestest";
     private static final String ALGO = "HS256";
     private static final long VALIDITY = 60000;
 
@@ -74,6 +73,6 @@ public class JWTSecretKeyAuthenticatorTest
         request.addHeader( HTTP_HEADER_NAME, JWTUtil.buildBase64JWT( mapJWTClaims, authenticator.getExpirationDate( ), key.getAlgorithm( ), key ) );
 
         Assertions.assertTrue( authenticator.isRequestAuthenticated( request ) );
-        Assertions.assertTrue( JWTUtil.checkPayloadValues( request, HTTP_HEADER_NAME, mapJWTClaims ) );
+        Assertions.assertTrue( JWTUtil.checkPayloadValues( request, key, HTTP_HEADER_NAME, mapJWTClaims ) );
     }
 }

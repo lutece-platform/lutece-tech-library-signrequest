@@ -33,7 +33,6 @@
  */
 package fr.paris.lutece.util.signrequest;
 
-import static fr.paris.lutece.util.signrequest.AbstractJWTAuthenticator.LOGGER;
 import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;

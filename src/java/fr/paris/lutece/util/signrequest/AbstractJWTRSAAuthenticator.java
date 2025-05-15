@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.util.signrequest;
 
+import java.security.Key;
 import java.security.KeyPair;
 import java.util.List;
 import java.util.Map;
@@ -75,11 +76,12 @@ public abstract class AbstractJWTRSAAuthenticator extends AbstractJWTAuthenticat
     @Override
     public boolean isRequestAuthenticated( HttpServletRequest request )
     {
-        boolean isAuthenticated = super.isRequestAuthenticated( request );
+        Key key = getKeyPair( ).getPublic( );
+        boolean validSignature = JWTUtil.checkSignature( request, _strJWTHttpHeader, key );
 
-        if ( isAuthenticated )
+        if ( validSignature )
         {
-            return JWTUtil.checkSignature( request, _strJWTHttpHeader, getKeyPair( ).getPublic( ) );
+            return super.isRequestAuthenticated( request, key );
         }
         return false;
     }

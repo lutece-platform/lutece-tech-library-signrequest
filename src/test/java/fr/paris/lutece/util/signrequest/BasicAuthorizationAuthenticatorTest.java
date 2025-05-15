@@ -56,7 +56,6 @@ public class BasicAuthorizationAuthenticatorTest
     @Test
     public void testIsRequestAuthenticated( )
     {
-        System.out.println( "isRequestAuthenticated" );
         MockHttpServletRequest request = new MockHttpServletRequest( );
         request.addHeader( HEADER_AUTHORIZATION, BASIC_AUTHORIZATION_PREFIX + VALID_DIGEST );
         BasicAuthorizationAuthenticator authenticator = new BasicAuthorizationAuthenticator( USERNAME, PASSWORD );

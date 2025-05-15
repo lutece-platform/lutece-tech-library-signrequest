@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.util.signrequest;
 
+import java.security.Key;
 import java.time.Instant;
 import java.util.Date;
 import java.util.Map;
@@ -73,23 +74,11 @@ public abstract class AbstractJWTAuthenticator extends AbstractAuthenticator
     /**
      * {@inheritDoc }
      */
-    @Override
-    public boolean isRequestAuthenticated( HttpServletRequest request )
+    public abstract boolean isRequestAuthenticated( HttpServletRequest request );
+    
+    protected boolean isRequestAuthenticated( HttpServletRequest request, Key key )
     {
-        // Verify if the request contains at least a JWT without checking its signature
-        // Verify the expiration date in the exp claim of the JWT
-        if ( !JWTUtil.containsValidUnsafeJWT( request, _strJWTHttpHeader ) )
-        {
-            return false;
-        }
-
-        // Verify in the JWT payload, the list of key/values to check
-        if ( !JWTUtil.checkPayloadValues( request, _strJWTHttpHeader, _mapClaimsToCheck ) )
-        {
-            return false;
-        }
-
-        return true;
+        return JWTUtil.checkPayloadValues( request, key, _strJWTHttpHeader, _mapClaimsToCheck );
     }
 
     /**

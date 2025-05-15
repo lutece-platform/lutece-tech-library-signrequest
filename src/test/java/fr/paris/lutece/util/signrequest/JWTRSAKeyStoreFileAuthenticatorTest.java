@@ -47,6 +47,7 @@ import org.junit.jupiter.api.Test;
 
 import fr.paris.lutece.test.mocks.MockHttpServletRequest;
 import fr.paris.lutece.util.jwt.service.JWTUtil;
+import io.jsonwebtoken.security.Keys;
 
 /**
  * JWTSecretKeyAuthenticatorTest
@@ -89,6 +90,6 @@ public class JWTRSAKeyStoreFileAuthenticatorTest
                 JWTUtil.buildBase64JWT( mapJWTClaims, authenticator.getExpirationDate( ), ALGO, authenticator.getKeyPair( ).getPrivate( ) ) );
 
         Assertions.assertTrue( authenticator.isRequestAuthenticated( request ) );
-        Assertions.assertTrue( JWTUtil.checkPayloadValues( request, HTTP_HEADER_NAME, mapJWTClaims ) );
+        Assertions.assertTrue( JWTUtil.checkPayloadValues( request, authenticator.getKeyPair( ).getPublic( ), HTTP_HEADER_NAME, mapJWTClaims ) );
     }
 }

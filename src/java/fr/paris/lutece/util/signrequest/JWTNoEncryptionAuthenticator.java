@@ -62,7 +62,7 @@ public class JWTNoEncryptionAuthenticator extends AbstractJWTAuthenticator
     public boolean isRequestAuthenticated( HttpServletRequest request )
     {
         // No signature checking for this implementation
-        return super.isRequestAuthenticated( request );
+        return JWTUtil.checkUnsecuredPayloadValues( request , _strJWTHttpHeader, _mapClaimsToCheck);
     }
 
     /**
