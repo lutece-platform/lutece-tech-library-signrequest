@@ -35,8 +35,9 @@ package fr.paris.lutece.util.signrequest;
 
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * IPAuthentificator is a class that authenticates requests based on the client's IP address.
@@ -56,6 +57,17 @@ public class IPAuthentificator implements RequestAuthenticator {
 	
 	private Set<String> _listIPs;
 	private MODE _mode;
+	
+    public IPAuthentificator( )
+    {
+
+    }
+	
+    public IPAuthentificator( String strMode, List<String> listIPs )
+    {
+        _mode = MODE.valueOf( strMode );
+        _listIPs = new TreeSet<String>( listIPs );
+    }
 	
 	/**
 	 * Gets the list of IP addresses.
