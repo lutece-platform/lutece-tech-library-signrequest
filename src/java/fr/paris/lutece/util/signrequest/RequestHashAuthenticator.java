@@ -36,8 +36,8 @@ package fr.paris.lutece.util.signrequest;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
+import fr.paris.lutece.util.signrequest.security.HashService;
 import jakarta.servlet.http.HttpServletRequest;
 
 /**
@@ -47,6 +47,18 @@ public class RequestHashAuthenticator extends AbstractPrivateKeyAuthenticator im
 {
     private static final String PARAMETER_SIGNATURE = "signature";
     private static final String PARAMETER_TIMESTAMP = "timestamp";
+
+    public RequestHashAuthenticator( )
+    {
+
+    }
+
+    public RequestHashAuthenticator(HashService hashService, List<String> lSignatureElements, String strPrivateKey)
+    {
+        setHashService( hashService );
+        setSignatureElements( lSignatureElements );
+        setPrivateKey( strPrivateKey );
+    }
 
     /**
      * {@inheritDoc }

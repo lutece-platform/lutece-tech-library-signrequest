@@ -40,9 +40,14 @@ import java.security.NoSuchAlgorithmException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Named;
+
 /**
  * Sha1HashService
  */
+@ApplicationScoped
+@Named( "signrequest.Sha1HashService" )
 public class Sha1HashService implements HashService
 {
     private static final String HEX_DIGITS = "0123456789abcdef";
