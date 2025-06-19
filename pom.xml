@@ -47,11 +47,6 @@
 		</dependency>
     </dependencies>
     
-    <properties>
-        <jiraProjectName>SIGNREQUEST</jiraProjectName>
-        <jiraComponentId>11582</jiraComponentId>
-    </properties>
-
     <scm>
         <connection>scm:git:https://github.com/lutece-platform/lutece-tech-library-signrequest.git</connection>
         <developerConnection>scm:git:https://github.com/lutece-platform/lutece-tech-library-signrequest.git</developerConnection>
