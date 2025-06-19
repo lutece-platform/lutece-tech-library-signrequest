@@ -40,11 +40,6 @@
             <type>jar</type>
         </dependency>
         
-        <!-- microprofile config api  -->
-		<dependency>
-			<groupId>org.eclipse.microprofile.config</groupId>
-			<artifactId>microprofile-config-api</artifactId>
-		</dependency>
     </dependencies>
     
     <scm>
