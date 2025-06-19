@@ -41,18 +41,24 @@ import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.ConfigProvider;
 
 import fr.paris.lutece.util.signrequest.HeaderHashAuthenticator;
+import fr.paris.lutece.util.signrequest.IPAuthentificator;
 import fr.paris.lutece.util.signrequest.JWTNoEncryptionAuthenticator;
 import fr.paris.lutece.util.signrequest.JWTRSAPlainTextAuthenticator;
 import fr.paris.lutece.util.signrequest.JWTRSATrustStoreFileAuthenticator;
 import fr.paris.lutece.util.signrequest.JWTSecretKeyAuthenticator;
 import fr.paris.lutece.util.signrequest.NoSecurityAuthenticator;
 import fr.paris.lutece.util.signrequest.RequestAuthenticator;
-import fr.paris.lutece.util.signrequest.security.Sha1HashService;
+import fr.paris.lutece.util.signrequest.RequestHashAuthenticator;
+import fr.paris.lutece.util.signrequest.security.HashService;
+import jakarta.enterprise.inject.Instance;
+import jakarta.enterprise.inject.literal.NamedLiteral;
+import jakarta.inject.Inject;
 
 public abstract class AbstractSignRequestAuthenticatorProducer
 {
 
     private static final String CONFIG_NAME = ".name";
+    private static final String CONFIG_HASH_SERVICE = ".cfg.hashService";
     private static final String CONFIG_SIGNATURE = ".cfg.signatureElements";
     private static final String CONFIG_PRIVATE_KEY = ".cfg.privateKey";
     private static final String CONFIG_PUBLIC_KEY = ".cfg.publicKey";
@@ -64,7 +70,13 @@ public abstract class AbstractSignRequestAuthenticatorProducer
     private static final String CONFIG_CACERT_PATH = ".cfg.cacertPath";
     private static final String CONFIG_CACERT_PASSWORD = ".cfg.cacertPassword";
     private static final String CONFIG_ALIAS = ".cfg.alias";
-
+    private static final String CONFIG_MODE = ".cfg.mode";
+    private static final String CONFIG_IPS = ".cfg.ips";
+    private static final String DEFAULT_HASH_SERVICE = "signrequest.Sha1HashService";
+    
+    @Inject
+    private Instance<HashService> _hashServices;
+    
     protected RequestAuthenticator produceRequestAuthenticator( String configPrefix )
     {
         Config _config = ConfigProvider.getConfig( );
@@ -74,7 +86,14 @@ public abstract class AbstractSignRequestAuthenticatorProducer
             case "signrequest.HeaderHashAuthenticator" ->
             {
                 yield new HeaderHashAuthenticator(
-                        new Sha1HashService( ),
+                        _hashServices.select( NamedLiteral.of( _config.getOptionalValue( configPrefix + CONFIG_HASH_SERVICE, String.class ).orElse( DEFAULT_HASH_SERVICE ) ) ).get( ),
+                        _config.getOptionalValues( configPrefix + CONFIG_SIGNATURE, String.class ).orElse( new ArrayList<String>( ) ),
+                        _config.getOptionalValue( configPrefix + CONFIG_PRIVATE_KEY, String.class ).orElse( null ) );
+            }
+            case "signrequest.RequestHashAuthenticator" ->
+            {
+                yield new RequestHashAuthenticator(
+                        _hashServices.select( NamedLiteral.of( _config.getOptionalValue( configPrefix + CONFIG_HASH_SERVICE, String.class ).orElse( DEFAULT_HASH_SERVICE ) ) ).get( ),
                         _config.getOptionalValues( configPrefix + CONFIG_SIGNATURE, String.class ).orElse( new ArrayList<String>( ) ),
                         _config.getOptionalValue( configPrefix + CONFIG_PRIVATE_KEY, String.class ).orElse( null ) );
             }
@@ -114,6 +133,12 @@ public abstract class AbstractSignRequestAuthenticatorProducer
                         _config.getOptionalValue( configPrefix + CONFIG_CACERT_PATH, String.class ).orElse( null ),
                         _config.getOptionalValue( configPrefix + CONFIG_CACERT_PASSWORD, String.class ).orElse( null ),
                         _config.getOptionalValue( configPrefix + CONFIG_ALIAS, String.class ).orElse( null ) );
+            }
+            case "signrequest.IPAuthenticator" ->
+            {
+                yield new IPAuthentificator( 
+                        _config.getOptionalValue( configPrefix + CONFIG_MODE, String.class ).orElse( null ),
+                        _config.getOptionalValues( configPrefix + CONFIG_IPS, String.class ).orElse( new ArrayList<String>( ) ));
             }
             default -> new NoSecurityAuthenticator( );
         };

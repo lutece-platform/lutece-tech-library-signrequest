@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2021, City of Paris
+ * Copyright (c) 2002-2024, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -44,11 +44,11 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Named;
 
 /**
- * Sha1HashService
+ * Sha512HashService
  */
 @ApplicationScoped
-@Named( "signrequest.Sha1HashService" )
-public class Sha1HashService implements HashService
+@Named( "signrequest.Sha512HashService" )
+public class Sha512HashService implements HashService
 {
     private static final String HEX_DIGITS = "0123456789abcdef";
     private static Logger _logger = LogManager.getLogger(  "lutece.security.signrequest" );
@@ -63,7 +63,7 @@ public class Sha1HashService implements HashService
 
         try
         {
-            md1 = MessageDigest.getInstance( "SHA-1" );
+            md1 = MessageDigest.getInstance( "SHA-512" );
         }
         catch( NoSuchAlgorithmException e )
         {
