@@ -33,8 +33,6 @@
  */
 package fr.paris.lutece.util.signrequest;
 
-import fr.paris.lutece.test.MokeHttpServletRequest;
-import fr.paris.lutece.util.jwt.service.JWTUtil;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -47,8 +45,12 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
-import static org.junit.Assert.*;
-import org.junit.Test;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+import fr.paris.lutece.test.mocks.MockHttpServletRequest;
+import fr.paris.lutece.util.jwt.service.JWTUtil;
 
 /**
  * JWTSecretKeyAuthenticatorTest
@@ -63,7 +65,7 @@ public class JWTRSATruststoreFileAuthenticatorTest
     private static final String CACERT_PATH = "cacerts";
     private static final String CACERT_PASSWORD = "changeit";
     private static final String ALIAS = "wso2carbon";
-    private static final String PRIV_KEY = "MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBAJSn+hXW9Zzz9ORBKIC9Oi6wzM4zhqwHaKW2vZAqjOeLlpUW7zXwyk4tkivwsydPNaWUm+9oDlEAB2lsQJv7jwWNsF7SGx5R03kenC+cf8Nbxlxwa+Tncjo6uruEsK/Vke244KiSCHP8BOuHI+r5CS0x9edFLgesoYlPPFoJxTs5AgMBAAECgYBL/6iiO7hr2mjrvMgZMSSqtCawkLUcA9mjRs6ZArfwtHNymzwGZqj22ONu5WqiASPbGCO0fI09KfegFQDe/fe6wnpirBWtawLoXCZmGrwC+x/3iqbiGJMd7UB3FaZkZOzV5Jhzomc8inSJWMcR+ywiUY37stfVDqR1sJ/jzZ1OdQJBAO8vCa2OVQBJbzjMvk8Sc0KiuVwnyqMYqVty6vYuufe9ILJfhwhYzE82wIa9LYg7UK2bPvKyyehuFfqI5oU5lU8CQQCfG5LA3gp3D1mS7xxztqJ+cm4SPO4R6YzVybAZKqKUvTFSKNV57Kp/LL7WjtUUNr+dY+aYRlKo81Hq61y8tBT3AkAjJyak+2ZCxIg0MONHe8603HWhtbdygQ1jA2DFDdkHMCS+EowmDeb5PXLOWr92ZkFVQpvdz6kdIBDa4YP/0JbBAkBVHLjqd1z9x7ZRBZwgwkg2gBwloXZxGpB+JMARFl+WVYa2vqVD7bhfA56qxAl0IL1sAm7ucl/xhQgDNRiM0YCNAkEAqySTBx2HO9VyzuWWbf7BYTNsxfO80GaRkZGENfqO1QgnhT1FMeK+ox7Kbi+nSaCBoPjNzyrMbU08M6nSnkDEGA==";
+    private static final String PRIV_KEY = "MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCsd3Tn1u9AKpWU7WXqs+p6dRboD/zbMCygGKSEYlFK/6nRa8s9vp/X9pf4i+GwgQv+dRTNeYIQgoPy7NDn9x+x30+lmzTxX9Ces1FVOUY01V69fsPzHaCBGjSjuneiKM4Ajm2oQQdMRV0ZpTfgK+qOMJzWBhxGdT+FAOAzk9FA2xqnrLLbyIXCgUPvpByZF+vVkVkAZmM6j69tWXgxa9uC5DYAdC0TrUfDxb7OiRNroDetDx11Kyvb6MOwIezWseMoSbIf1a0pWzLKzdq08UjBCmOQcqbjDFAJOKNtGdP63bcCKnCdO1jrJaCCBEi85VArIBsXUC6gBsqgka/N2I1hAgMBAAECggEAD5C/ytV8W1tci7KPV7WW4dLOgfGWHcbact/hJ+zjBF9QWXfJQeXXRvuuWelvXD7msQz/wc8Hx5YCnaVKR3KSIuYSKf1OM8Nfhes42csPrzYF/8PrSyEEkDz9Z5ItOO6bhQkAaZvmMjfdFV2deOHNy2PPdoYvqBuYji2hjoDL9SE10t6Qk5TPFHShcyZ6v8VPl2lbQ0MsB9g4ljouV4Yk+eh6lfjU6tz5o3ZT70JipmteeSb2iLHLQSRCZvPlXXobk/jW+Cu8cw6lsLPIcq45sW782FG2xGS4qSe6cLmkWihouJr9cPcXZ9Rx3P+G15Z/ibjGMbsPUSK7q8CcMYnFFwKBgQDlWuTosuGWdSS+mZ3il0NzR8oRYQI7GbdTbl5JsCjF9OGjUGEsliCQ1NJvIZj0BQGG9pAVowXCPJJ+M9NLzXpw9+C0+EdcU0ITp8flTc7I2wZgXCaBE6dnpula4HUzy/fM9nvSPK3LyohE6Nece0o+JkichXcG+tfUf90Xhg97xwKBgQDAgK3fuMmejM1hVBgbIw9afiROBee35mBDxKJNFNCZQ4hXKCk1uZA97fpiitNuZ4VPhGiNbC0iHEvAkydhjFoedWHI/kOfOFAg2IBx0NOjzOl9p5ab4/mL/dof8HtJ+7ivAKLlCuX8uUQeUJyGcClQsdnxhETHPEwEweLfLscdlwKBgF9y5lTZLPy6n6IauBQ2s0FknPmCj7UczKiSA/dSsoU/li+rIeW2TLM5fqH1L3xOIQaT0f7PK3RcVPLkioi/aLde0Us/ECOiGpundY8+RFJepFaxwuxwy3hdhDvnsZ7uwZ+w7HLgAcwP64oSBLkArjMTJ6DMAm8LMYsj81T427S9AoGBAIwsp2/jdR041kzrGWqZSxLQC8uszSDCZpKyWqTaZVNVM7CTk/6FEx2lbs/W20LnqtFOT3u7q9nM1PRzsxd7RhwryXq8e60zKlXgkRdPwuzhx5wyLp9xkEN6JB1h1cT3wXHdesBiATrYBVw1wuS6Q7t45oTRleumYoyMSpHN1DwdAoGBAISezeucX4azFaI/bQs00ibtsIYAYol4DR1gnn+QM6grnupGuDxrOTfxQEs40+tcb2efnb+Py2TJntyzh988JMRKFe73CdXufa3s7bnEHI7H5ELv7QUsH+/60JXJymilJtnfAK4fe963Vlpfw0RVByDWsynKSNZFdICGw3ZkcVAw";
 
     /**
      * Test of isRequestAuthenticated method, of class JWTRSATruststoreFileAuthenticatorTest.
@@ -74,7 +76,7 @@ public class JWTRSATruststoreFileAuthenticatorTest
     @Test
     public void testSignRequestAndTestAuth( ) throws InvalidKeySpecException, NoSuchAlgorithmException, URISyntaxException
     {
-        MokeHttpServletRequest request = new MokeHttpServletRequest( );
+        MockHttpServletRequest request = new MockHttpServletRequest( );
 
         URL res = getClass( ).getClassLoader( ).getResource( CACERT_PATH );
         File file = Paths.get( res.toURI( ) ).toFile( );
@@ -91,9 +93,9 @@ public class JWTRSATruststoreFileAuthenticatorTest
         PrivateKey privKey = kf.generatePrivate( keySpecPKCS8 );
 
         // Build a request with a JWT in header
-        request.addMokeHeader( HTTP_HEADER_NAME, JWTUtil.buildBase64JWT( mapJWTClaims, authenticator.getExpirationDate( ), ALGO, privKey ) );
+        request.addHeader( HTTP_HEADER_NAME, JWTUtil.buildBase64JWT( mapJWTClaims, authenticator.getExpirationDate( ), ALGO, privKey ) );
 
-        assertTrue( authenticator.isRequestAuthenticated( request ) );
-        assertTrue( JWTUtil.checkPayloadValues( request, HTTP_HEADER_NAME, mapJWTClaims ) );
+        Assertions.assertTrue( authenticator.isRequestAuthenticated( request ) );
+        Assertions.assertTrue( JWTUtil.checkPayloadValues( request, authenticator.getKeyPair( ).getPublic( ), HTTP_HEADER_NAME, mapJWTClaims ) );
     }
 }

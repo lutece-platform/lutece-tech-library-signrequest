@@ -47,6 +47,7 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.util.Map;
 
+import fr.paris.lutece.util.jwt.service.JWTUtil;
 import jakarta.servlet.http.HttpServletRequest;
 
 public class JWTRSAKeyStoreFileAuthenticator extends AbstractJWTRSAAuthenticator
@@ -62,13 +63,15 @@ public class JWTRSAKeyStoreFileAuthenticator extends AbstractJWTRSAAuthenticator
     @Override
     public boolean isRequestAuthenticated( HttpServletRequest request )
     {
+        boolean validSignature = JWTUtil.checkSignature( request, _strJWTHttpHeader, getKeyPair( ).getPublic( ) );
+        
         // WARNING
         // Be careful when your using the KeyStoreFileAuthenticator to sign request.
         // This implementation can be used from request inside the same server; because
         // its requires the keystore which contains both private and public keys. Do
         // not use it if your are client/server request mode, as API calls. See doc
         // for more informations.
-        return super.isRequestAuthenticated( request );
+        return super.isRequestAuthenticated( request, getKeyPair( ).getPublic( ) );
     }
 
     /**

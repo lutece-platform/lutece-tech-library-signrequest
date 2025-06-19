@@ -80,12 +80,12 @@ public class JWTSecretKeyAuthenticator extends AbstractJWTAuthenticator
     @Override
     public boolean isRequestAuthenticated( HttpServletRequest request )
     {
-        boolean isAuthenticated = super.isRequestAuthenticated( request );
+        Key key = JWTUtil.getKey( _strSecretKey, _strEncryptionAlgorythmName );
+        boolean validSignature = JWTUtil.checkSignature( request, _strJWTHttpHeader, key );
 
-        if ( isAuthenticated )
+        if ( validSignature )
         {
-            Key key = JWTUtil.getKey( _strSecretKey, _strEncryptionAlgorythmName );
-            return JWTUtil.checkSignature( request, _strJWTHttpHeader, key );
+            return super.isRequestAuthenticated( request, key );
         }
         return false;
     }
