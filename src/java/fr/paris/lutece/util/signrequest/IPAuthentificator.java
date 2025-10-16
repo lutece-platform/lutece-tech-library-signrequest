@@ -56,6 +56,7 @@ public class IPAuthentificator implements RequestAuthenticator {
 	}
 	
 	private Set<String> _listIPs;
+	private Set<String> _listAuthorizedPath;
 	private MODE _mode;
 	
     public IPAuthentificator( )
@@ -77,7 +78,7 @@ public class IPAuthentificator implements RequestAuthenticator {
 	public Set<String> getIPs( ) {
 		return _listIPs;
 	}
-	
+
 	/**
 	 * Sets the list of IP addresses.
 	 * 
@@ -86,6 +87,25 @@ public class IPAuthentificator implements RequestAuthenticator {
 	 */
 	public void setIPs( Set<String> list ) {
 		this._listIPs = list;
+	}
+	
+	/**
+	 * Sets the list of authorized path exclusions for IP restriction
+	 * 
+	 * @param list
+	 * 		The list of excluded paths
+	 */
+	public void setAuthorizedPaths( Set<String> list ) {
+		this._listAuthorizedPath = list;
+	}
+	
+	/**
+	 * Gets the list of authorized path exclusions for IP restriction
+	 * 
+	 * @return the list of excluded paths
+	 */
+	public Set<String> getAuthorizedPaths( ) {
+		return _listIPs;
 	}
 	
 	/**
@@ -111,13 +131,23 @@ public class IPAuthentificator implements RequestAuthenticator {
 	 * {@inheritDoc }
 	 * 
 	 * Authenticates the request based on the client's IP address.
+	 * (Do not apply IP restriction if the Servlet path starts with one of the authorized path)
 	 * 
 	 * @param request The HTTP request to authenticate
 	 * @return true if the request is authenticated, false otherwise
 	 */
 	@Override
-	public boolean isRequestAuthenticated( HttpServletRequest request ) {
-		String remoteAddr = request.getRemoteAddr();
+	public boolean isRequestAuthenticated( HttpServletRequest request ) 
+	{
+	    	String servletPath = request.getServletPath( );
+	    	
+	    	if ( _listAuthorizedPath != null && 
+	    		_listAuthorizedPath.stream( ).anyMatch( path -> servletPath.startsWith ( path ) ) )
+	    	{
+	    	    return true;
+	    	}
+	    	
+	    	String remoteAddr = request.getRemoteAddr();
 		boolean isIPInList = _listIPs != null && _listIPs.contains(remoteAddr);
 
 		switch (_mode) {
