@@ -72,6 +72,7 @@ public abstract class AbstractSignRequestAuthenticatorProducer
     private static final String CONFIG_ALIAS = ".cfg.alias";
     private static final String CONFIG_MODE = ".cfg.mode";
     private static final String CONFIG_IPS = ".cfg.ips";
+    private static final String CONFIG_AUTHORIZED_PATH = ".cfg.authorizedPath";
     private static final String DEFAULT_HASH_SERVICE = "signrequest.Sha1HashService";
     
     @Inject
@@ -138,7 +139,8 @@ public abstract class AbstractSignRequestAuthenticatorProducer
             {
                 yield new IPAuthentificator( 
                         _config.getOptionalValue( configPrefix + CONFIG_MODE, String.class ).orElse( null ),
-                        _config.getOptionalValues( configPrefix + CONFIG_IPS, String.class ).orElse( new ArrayList<String>( ) ));
+                        _config.getOptionalValues( configPrefix + CONFIG_IPS, String.class ).orElse( new ArrayList<String>( ) ),
+                        _config.getOptionalValues( configPrefix + CONFIG_AUTHORIZED_PATH, String.class ).orElse( new ArrayList<String>( ) ));
             }
             default -> new NoSecurityAuthenticator( );
         };
