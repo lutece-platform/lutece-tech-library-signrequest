@@ -63,13 +63,14 @@ public class IPAuthentificator implements RequestAuthenticator {
     {
 
     }
-	
-    public IPAuthentificator( String strMode, List<String> listIPs )
+
+    public IPAuthentificator( String strMode, List<String> listIPs, List<String> listAuthorizedPath )
     {
         _mode = MODE.valueOf( strMode );
         _listIPs = new TreeSet<String>( listIPs );
+        _listAuthorizedPath = new TreeSet<String>( listAuthorizedPath );
     }
-	
+
 	/**
 	 * Gets the list of IP addresses.
 	 * 
